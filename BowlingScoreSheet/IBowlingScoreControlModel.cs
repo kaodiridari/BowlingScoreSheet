@@ -4,8 +4,9 @@
     {
         bool GameOver { get; set; }
         void SetFrameScore(int frameNumber, int score);
-        void SetTotalScore(int score);
+        //void SetTotalScore(int score);
         void SetBall(int frame, int ball, int pins);
         void Clear();
+        string GetId();
     }        
 }

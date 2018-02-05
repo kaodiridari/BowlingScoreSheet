@@ -5,36 +5,50 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BowlingScoreSheet"
         mc:Ignorable="d"
-        Title="Bowling Score Sheet" Height="500" Width="1010" MinWidth="1010" MaxWidth="1010"
+        Title="Bowling Score Sheet" Height="750" Width="1010" MinWidth="1010" MaxWidth="1010"
         x:Name="mainWindow">
-    <Grid Margin="0,0,0,0">
-        <Button Content="0"  IsEnabled="{Binding IsButtonEnabled[0]}"  HorizontalAlignment="Left" Height="25" Margin= "20,20,0,0"  VerticalAlignment="Top" Width="25" Click="Button0_Click"/>
-        <Button Content="1"  IsEnabled="{Binding IsButtonEnabled[1]}"  HorizontalAlignment="Left" Height="25" Margin= "50,20,0,0"  VerticalAlignment="Top" Width="25" Click="Button1_Click"/>
-        <Button Content="2"  IsEnabled="{Binding IsButtonEnabled[2]}"  HorizontalAlignment="Left" Height="25" Margin= "80,20,0,0"  VerticalAlignment="Top" Width="25" Click="Button2_Click"/>
-        <Button Content="3"  IsEnabled="{Binding IsButtonEnabled[3]}"  HorizontalAlignment="Left" Height="25" Margin= "110,20,0,0" VerticalAlignment="Top" Width="25" Click="Button3_Click"/>
-        <Button Content="4"  IsEnabled="{Binding IsButtonEnabled[4]}"  HorizontalAlignment="Left" Height="25" Margin= "140,20,0,0" VerticalAlignment="Top" Width="25" Click="Button4_Click"/>
-        <Button Content="5"  IsEnabled="{Binding IsButtonEnabled[5]}"  HorizontalAlignment="Left" Height="25" Margin= "170,20,0,0" VerticalAlignment="Top" Width="25" Click="Button5_Click"/>
-        <Button Content="6"  IsEnabled="{Binding IsButtonEnabled[6]}"  HorizontalAlignment="Left" Height="25" Margin= "200,20,0,0" VerticalAlignment="Top" Width="25" Click="Button6_Click"/>
-        <Button Content="7"  IsEnabled="{Binding IsButtonEnabled[7]}"  HorizontalAlignment="Left" Height="25" Margin= "230,20,0,0" VerticalAlignment="Top" Width="25" Click="Button7_Click"/>
-        <Button Content="8"  IsEnabled="{Binding IsButtonEnabled[8]}"  HorizontalAlignment="Left" Height="25" Margin= "260,20,0,0" VerticalAlignment="Top" Width="25" Click="Button8_Click"/>
-        <Button Content="9"  IsEnabled="{Binding IsButtonEnabled[9]}"  HorizontalAlignment="Left" Height="25" Margin= "290,20,0,0" VerticalAlignment="Top" Width="25" Click="Button9_Click"/>
-        <Button Content="10" IsEnabled="{Binding IsButtonEnabled[10]}" HorizontalAlignment="Left" Height="25" Margin= "320,20,0,0" VerticalAlignment="Top" Width="25" Click="Button10_Click"/>
-
-        <!--
-            Wie baut man dynamisch eins, zwei, viele Controls?
-        -->
-        <local:BowlingScoreControl Margin="20, 70,20,0"></local:BowlingScoreControl>
-        <local:BowlingScoreControl Margin="20,240,20,0"></local:BowlingScoreControl>
-        <!--<ItemsControl 
-            ItemsSource="{Binding daScores}"
-            ItemTemplate="{local:BowlingScoreControl.itemsTemplate}"
-            >
-            <ItemsControl.ItemsPanel>                
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Vertical" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>-->
-        <Button Content="New Game" IsEnabled="{Binding IsNewGame}" HorizontalAlignment="Left" Margin="907,25,0,0" VerticalAlignment="Top" Width="75" Click="ButtonClear_Click" />
+    <Grid Name="mainPanel" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.072*"/>
+            <RowDefinition Height="0.928*"/>
+            <RowDefinition Height="0.072*"/>            
+        </Grid.RowDefinitions>
+        <StackPanel Name="pinButtons" Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="2">
+            <Button Content="0"  IsEnabled="{Binding IsButtonEnabled[0]}"  Height="25"  Width="25" Margin="10" Click="Button0_Click"/>
+            <Button Content="1"  IsEnabled="{Binding IsButtonEnabled[1]}"  Height="25"  Width="25" Margin="10" Click="Button1_Click"/>
+            <Button Content="2"  IsEnabled="{Binding IsButtonEnabled[2]}"  Height="25"  Width="25" Margin="10" Click="Button2_Click"/>
+            <Button Content="3"  IsEnabled="{Binding IsButtonEnabled[3]}"  Height="25"  Width="25" Margin="10" Click="Button3_Click"/>
+            <Button Content="4"  IsEnabled="{Binding IsButtonEnabled[4]}"  Height="25"  Width="25" Margin="10" Click="Button4_Click"/>
+            <Button Content="5"  IsEnabled="{Binding IsButtonEnabled[5]}"  Height="25"  Width="25" Margin="10" Click="Button5_Click"/>
+            <Button Content="6"  IsEnabled="{Binding IsButtonEnabled[6]}"  Height="25"  Width="25" Margin="10" Click="Button6_Click"/>
+            <Button Content="7"  IsEnabled="{Binding IsButtonEnabled[7]}"  Height="25"  Width="25" Margin="10" Click="Button7_Click"/>
+            <Button Content="8"  IsEnabled="{Binding IsButtonEnabled[8]}"  Height="25"  Width="25" Margin="10" Click="Button8_Click"/>
+            <Button Content="9"  IsEnabled="{Binding IsButtonEnabled[9]}"  Height="25"  Width="25" Margin="10" Click="Button9_Click"/>
+            <Button Content="10" IsEnabled="{Binding IsButtonEnabled[10]}" Height="25"  Width="25" Margin="10" Click="Button10_Click"/>
+        </StackPanel>
+        <ListBox
+             x:Name="bowlingScoreListBox"
+             ScrollViewer.VerticalScrollBarVisibility="Visible"
+             SelectionMode="Extended" SelectionChanged="lb_SelectionChanged" 
+             Grid.Row="1" Grid.ColumnSpan="2"
+             >
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <local:BowlingScoreControl/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Button Content="Save" IsEnabled="{Binding IsSave}" Grid.Row="2" Grid.Column="0" 
+                HorizontalAlignment="Right" VerticalAlignment="Center" Width="75" Margin="0,0,10,0"
+                Click="ButtonSave_Click" />
+        <Button Content="New Game" IsEnabled="{Binding IsNewGame}" Grid.Row="2" Grid.Column="2" 
+                HorizontalAlignment="Left" VerticalAlignment="Center" Width="75" Margin="10"
+                Click="ButtonClear_Click" />
     </Grid>
 </Window>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
@@ -7,71 +8,27 @@ namespace BowlingScoreSheet
     /// <summary>
     /// For several BowlingScoreControlModels and the pin-buttons.
     /// </summary>
-    internal class BowlingDialogModel : INotifyPropertyChanged
-    {
-        #region score
+    public class BowlingDialogModel : INotifyPropertyChanged
+    {        
         /// <summary>
         /// For the pin buttons.
         /// </summary>
         private bool[] m_isButtonEnabled;
-        #endregion
+       
         private bool m_isNewGame;
 
-        private BowlingScoreControlModel[] m_playersScores;
+        private BowlingScoreControlModel[] m_BowlingScoreControlModels;
 
-        private int m_activeBowlingScoreControlModel;
+        private string m_activeBowlingScoreControlModel;
 
         /// <summary>
         /// Constructor. Builds submodels for the given players.
         /// </summary>
         /// <param name="players">The players names.<br></br> Initials of the names are used. For empty strings the index is used.</param>
-        public BowlingDialogModel(string[] players)
+        public BowlingDialogModel(BowlingScoreControlModel[] bowlingScoreControlModels)
         {
-            Init();
-
-            //Initialise sub-models
-            if (players.Length == 0)
-            {
-                throw new Exception("At least one player is necessary.");
-            }
-
-            m_playersScores = new BowlingScoreControlModel[players.Length];
-
-            for (int i = 0; i < players.Length; i++)
-            {
-                string name;
-                if (players[i] != null && (players[i]) != string.Empty)
-                {
-                    //initials
-                    var s = players[i].Trim().Split(' ');
-                    StringBuilder sb = new StringBuilder();
-                    foreach (var item in s)
-                    {
-                        sb.Append(item.Trim().Substring(0, 1)).Append(".");
-                    }
-                    name = sb.ToString();
-                } else
-                {
-                    name = Convert.ToString(i); 
-                }
-
-                //Must be unique.
-                int n = 0;
-                for (int j = 0; j < i; j++)
-                {
-                    if (players[j].StartsWith(name))
-                    {
-                        n++;
-                    }    
-                }
-                if (n > 0)
-                {
-                    //add (n)
-                    name = (new StringBuilder(name)).Append('(').Append(n+1).Append(')').ToString();
-                }
-
-                m_playersScores[i] = new BowlingScoreControlModel(name);
-            }
+            m_BowlingScoreControlModels = bowlingScoreControlModels;
+            Init();            
         }
 
         public bool IsNewGame
@@ -80,6 +37,16 @@ namespace BowlingScoreSheet
             {
                 return m_isNewGame;
             }
+        }
+
+        public string[] GetPlayersIds()
+        {
+            List <string> ids = new List<string>();
+            foreach (var item in m_BowlingScoreControlModels)
+            {
+                ids.Add(item.PlayersInitials);
+            }
+            return ids.ToArray();
         }
 
         private void Init()
@@ -123,13 +90,13 @@ namespace BowlingScoreSheet
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="player">The player's id.</param>
+        /// <param name="playerId">The player's id.</param>
         /// <param name="n">Number of pins.</param>
-        public void justAnotherBallThrownFromPlayer(string player, int n)
+        public void justAnotherBallThrownFromPlayer(string playerId, int n)
         {
             int i = 0;
-            for (; i < m_playersScores.Length; i++) {
-                if (m_playersScores[i].Player.Equals(player))
+            for (; i < m_BowlingScoreControlModels.Length; i++) {
+                if (m_BowlingScoreControlModels[i].PlayersInitials.Equals(playerId))
                 {
                     break;
                 }                     
@@ -190,8 +157,8 @@ namespace BowlingScoreSheet
             }
         }
 
-        //selection model
-        public int ActiveBowlingScoreControl
+        //The selection model. The model for the now selected BowlingScoreControl.
+        public string ActiveBowlingScoreControl
         {
             get
             {

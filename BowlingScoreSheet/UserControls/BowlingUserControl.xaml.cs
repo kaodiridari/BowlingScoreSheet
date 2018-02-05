@@ -20,12 +20,19 @@ namespace BowlingScoreSheet
     /// </summary>
     public partial class BowlingScoreControl : UserControl
     {
-        private IBowlingScoreControlModel bowlingDialogModel;
+        private IBowlingScoreControlModel m_bowlingScoreControlModel;
 
-        public BowlingScoreControl(IBowlingScoreControlModel m)
+        public BowlingScoreControl()
         {
-            DataContext = m;
+            //wo kommt model her?
             InitializeComponent();
         }
+
+        //public BowlingScoreControl(IBowlingScoreControlModel m)
+        //{
+        //    DataContext = m;
+        //    m_bowlingScoreControlModel = m;
+        //    InitializeComponent();
+        //}
     }
 }

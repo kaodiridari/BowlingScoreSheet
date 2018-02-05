@@ -1,31 +1,65 @@
 ﻿using System.Windows;
 using System.Reflection;
 using System.Text;
+using System;
+using System.Collections.ObjectModel;
 
 namespace BowlingScoreSheet
 {
     /// <summary>
     /// The Bowling Score Sheet dialog.
     /// </summary>
-    public partial class BowlingDialog : Window
+    public partial class BowlingDialog : Window, IBowlingDialog
     {
         private BowlingDialogModel m_bowlingDialogModel;
         private BowlingDialogControler m_bowlingDialogControler;
-        //private BowlingScoreController bowling;
+        private BowlingScoreControlModel[] m_BowlingScoreControlModels;
+        private BowlingScoreControlControler[] m_BowlingScoreControlControlers;
+        //private string[] players;
+
+        ObservableCollection<BowlingScoreControlModel> items = new ObservableCollection<BowlingScoreControlModel>();
 
         public BowlingDialog()
         {
             InitializeComponent();
-            var tmp = new string[] {"Peter Müller", "Heiner Müller", "Üzgül Özalü"};
-            
-            m_bowlingDialogModel = new BowlingDialogModel(tmp);
-            
-            //Create Controlers for the submodels.
-            TODO
-            m_bowlingDialogControler = new BowlingDialogControler(m_bowlingDialogModel);
+            new ConfigBowlingDialog(this, MyApp.getInstance());
+            this.DataContext = m_bowlingDialogModel;
 
-            this.DataContext = m_bowlingDialogModel;            
+            for (int i = 0; i < m_BowlingScoreControlModels.Length; i++)
+            {
+                items.Add(m_BowlingScoreControlModels[i]);
+            } 
+            bowlingScoreListBox.ItemsSource = items;
         }
+
+
+
+        #region setters
+        public void SetBowlingDialogControler(BowlingDialogControler bowlingDialogControler)
+        {
+            m_bowlingDialogControler = bowlingDialogControler;
+        }
+
+        public void SetBowlingDialogModel(BowlingDialogModel bowlingDialogModel)
+        {
+            m_bowlingDialogModel = bowlingDialogModel;
+        }
+
+        public void SetBowlingScoreControlControlers(BowlingScoreControlControler[] bowlingScoreControlControlers)
+        {
+            m_BowlingScoreControlControlers = bowlingScoreControlControlers;
+        }
+
+        public void SetBowlingScoreControlModels(BowlingScoreControlModel[] bowlingScoreControlModels)
+        {
+            m_BowlingScoreControlModels = bowlingScoreControlModels;
+        }
+
+        public void SetPlayers(string[] players)
+        {
+
+        }
+        #endregion
 
         private void Button0_Click(object sender, RoutedEventArgs e)
         {
@@ -88,12 +122,26 @@ namespace BowlingScoreSheet
         /// <param name="e"></param>
         private void ButtonClear_Click(object sender, RoutedEventArgs e)
         {
-            m_bowlingDialogControler.Clear();
+
+            //zum probieren von liste auskommentiert; m_bowlingDialogControler.Clear();
+            
         }
 
         private void rules(int i)
         {
             m_bowlingDialogControler.JustAnotherBallThrown(i);
+        }
+
+        private void lb_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            int i = bowlingScoreListBox.SelectedIndex;
+            BowlingScoreControlModel item = (BowlingScoreControlModel)bowlingScoreListBox.SelectedItem;
+            m_bowlingDialogModel.ActiveBowlingScoreControl = item.PlayersInitials;
+        }
+
+        private void ButtonSave_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

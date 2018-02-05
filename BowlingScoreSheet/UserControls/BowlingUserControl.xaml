@@ -6,9 +6,7 @@
              xmlns:local="clr-namespace:BowlingScoreSheet"
              mc:Ignorable="d" 
              d:DesignHeight="150" d:DesignWidth="1000">
-    <!--<UserControl.Resources>-->
-    <!--<DataTemplate x:Key="itemsTemplate">-->
-        <Grid>
+            <Grid>
             <Border BorderThickness="3" BorderBrush="Green" CornerRadius="10" Background="LightGray" HorizontalAlignment="Left" VerticalAlignment="Top" Width="962" Height="146">
                 <Canvas HorizontalAlignment="Left" Height="125"  Width="942" Margin="7,7,0,0" VerticalAlignment="Top" Background="GhostWhite" >
                     <Rectangle StrokeThickness="1" Stroke="Black" Fill="LightGray" Height="26" Canvas.Left="20" Canvas.Top="15" Width="899"/>

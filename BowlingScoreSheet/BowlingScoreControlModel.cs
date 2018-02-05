@@ -18,15 +18,18 @@ namespace BowlingScoreSheet
 
         private string m_player;
 
+        private string m_playersId;
+
         private bool m_gameOver = false;
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="players">The number of BowlingScoreControls.</param>
-        public BowlingScoreControlModel(string player)
+        /// <param name="player">Players full name.</param>
+        public BowlingScoreControlModel(string player, string playerId)
         {
             m_player = player;
+            m_playersId = playerId;
             Init();
         }
 
@@ -60,11 +63,11 @@ namespace BowlingScoreSheet
             UpdateProperty("FrameScore");
         }
 
-        public void SetTotalScore(int score)
-        {
-            TotalScore = Convert.ToString(score);
-            UpdateProperty("TotalScore");
-        }
+        //public void SetTotalScore(int score)
+        //{
+        //    TotalScore = Convert.ToString(score);
+        //    UpdateProperty("TotalScore");
+        //}
 
         #region interface
         public event PropertyChangedEventHandler PropertyChanged;
@@ -109,6 +112,11 @@ namespace BowlingScoreSheet
             throw new NotImplementedException();
         }
 
+        public string GetId()
+        {
+           return this.m_playersId;
+        }
+
         public string[] Balls
         {
             get
@@ -123,31 +131,13 @@ namespace BowlingScoreSheet
             {
                 return m_FrameScore;
             }
-        }
-
-        public string TotalScore
-        {
-            get
-            {
-                return "000";
-            }
-
-            set
-            {
-
-            }
-        }
+        }        
 
         public string PlayersInitials
         {
             get
             {
-                return "A.B.";
-            }
-
-            set
-            {
-
+                return m_playersId;
             }
         }
 
@@ -156,12 +146,7 @@ namespace BowlingScoreSheet
             get
             {
                 return this.m_player;
-            }
-
-            set
-            {
-                m_player = value;
-            }
+            }            
         }
 
         public bool GameOver

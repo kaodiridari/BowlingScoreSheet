@@ -9,27 +9,63 @@ namespace BowlingScoreSheet
     /// <summary>
     /// The Controler for the (main) Window.
     /// </summary>
-    internal class BowlingDialogControler
+    public class BowlingDialogControler
     {
-        BowlingDialogModel m_bowlingDialogModel;
+        private BowlingDialogModel m_bowlingDialogModel;
 
-        internal BowlingDialogControler(BowlingDialogModel m)
+        private BowlingScoreControlControler[] m_controlControlers;
+
+        public BowlingDialogControler(BowlingDialogModel m,
+            BowlingScoreControlControler[] controlControlers)
         {
             m_bowlingDialogModel = m;
+            m_controlControlers = controlControlers;
         }
 
-        internal void Clear()
+        public BowlingScoreControlControler GetControlControler(string id)
+        {
+            foreach (var item in m_controlControlers)
+            {
+                if(item.GetId().Equals(id))
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        public void Clear()
         {
             throw new NotImplementedException();
         }
 
-        internal void JustAnotherBallThrown(int numberOfPins)
+        //WPF: comes from a click_Event.
+        public void SetActiveControl(string id)
+        {
+            m_bowlingDialogModel.ActiveBowlingScoreControl = id;
+        } 
+
+        public void JustAnotherBallThrown(int numberOfPins)
         {
             //throw new NotImplementedException();
             //1. Which is the active BowlingScoreControl? 
             //2. Notify the controll. 
-            BowlingScoreControlControler activeBowlingScoreControlControler;
-            int i = m_bowlingDialogModel.ActiveBowlingScoreControl;
+            
+            string id = m_bowlingDialogModel.ActiveBowlingScoreControl;
+            foreach (var item in m_controlControlers)
+            {
+                if (item.GetId().Equals(id))
+                {
+                    item.justAnotherBallThrown(numberOfPins);
+                    break;
+                }
+            }            
+        }
+
+        public string[] GetPlayerIds()
+        {
+            string[] ids = m_bowlingDialogModel.GetPlayersIds();
+            return ids;
         }
     }
 }

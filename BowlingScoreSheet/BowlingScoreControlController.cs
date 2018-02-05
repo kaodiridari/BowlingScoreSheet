@@ -38,19 +38,19 @@ namespace BowlingScoreSheet
     }
 
     /// <summary>
-    /// The controller for a single bowling control.
+    /// The controller for a single supercalifragilisticexpialidocious bowling control.
     /// </summary>
     public class BowlingScoreControlControler
     {
-        BowlingFrame[] m_frames;
+        private BowlingFrame[] m_frames;
 
         private int m_frame = -1; //the index of the current frame
 
-        private IBowlingScoreControlModel bowlingscoreControlModel;         
+        private IBowlingScoreControlModel m_bowlingScoreControlModel;         
 
-        public BowlingScoreControlControler(IBowlingScoreControlModel bowlingDialogModel)
+        public BowlingScoreControlControler(IBowlingScoreControlModel bowlingScoreControlModel)
         {
-            this.bowlingscoreControlModel = bowlingDialogModel;
+            this.m_bowlingScoreControlModel = bowlingScoreControlModel;
             m_frames = new BowlingFrame[10];            
         }
 
@@ -58,7 +58,7 @@ namespace BowlingScoreSheet
         {
             m_frames = new BowlingFrame[10];
             m_frame = -1;
-            bowlingscoreControlModel.Clear();
+            m_bowlingScoreControlModel.Clear();
         }
 
         /// <summary>
@@ -99,12 +99,12 @@ namespace BowlingScoreSheet
 
             //just so
             currentFrame.addBall(pins);
-            bowlingscoreControlModel.SetBall(m_frame, m_frames[m_frame].balls.Count, pins);
+            m_bowlingScoreControlModel.SetBall(m_frame, m_frames[m_frame].balls.Count, pins);
 
             //for (int i = 0; i <= m_frame; i++)  //vieleicht nur die letzten beiden falls zu teuer
             for (int i = Math.Max(0, m_frame - 2); i <= m_frame; i++)
             {
-                bowlingscoreControlModel.SetFrameScore(i, m_frames[i].score);
+                m_bowlingScoreControlModel.SetFrameScore(i, m_frames[i].score);
             }
 
             //Game over?
@@ -113,13 +113,13 @@ namespace BowlingScoreSheet
             //10. Frame is a spare -> three balls in frame 10
             if (m_frame == 9 && m_frames[m_frame].balls.Count == 3)
             {
-                bowlingscoreControlModel.SetTotalScore(m_frames[m_frame].score);
-                bowlingscoreControlModel.GameOver = true;
+                //m_bowlingScoreControlModel.SetTotalScore(m_frames[m_frame].score);
+                m_bowlingScoreControlModel.GameOver = true;
             }
             if (m_frame == 9 && m_frames[m_frame].isSpare == 0 && m_frames[m_frame].isStrike == 0 && m_frames[m_frame].balls.Count == 2)
             {
-                bowlingscoreControlModel.SetTotalScore(m_frames[m_frame].score);
-                bowlingscoreControlModel.GameOver = true;
+                //m_bowlingScoreControlModel.SetTotalScore(m_frames[m_frame].score);
+                m_bowlingScoreControlModel.GameOver = true;
             }
         }
 
@@ -171,7 +171,12 @@ namespace BowlingScoreSheet
             m_frame++;
             m_frames[m_frame] = frame;
             return frame;
-        }        
+        }
+
+        internal string GetId()
+        {
+            return m_bowlingScoreControlModel.GetId();
+        }
     }
 
     
