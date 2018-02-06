@@ -4,22 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Runtime.Serialization;
 
 namespace BowlingScoreSheet
 {
     /// <summary>
     /// The model for a supercalifragilisticexpialidocious BowlingScoreControl.
     /// </summary>
+    [DataContract]
     public class BowlingScoreControlModel : INotifyPropertyChanged, IBowlingScoreControlModel
-    { 
+    {
+        [DataMember]
         private string[] m_ball;
-
-        private string[] m_FrameScore;         
-
+        [DataMember]
+        private string[] m_FrameScore;
+        [DataMember]
         private string m_player;
-
+        [DataMember]
         private string m_playersId;
-
+        [DataMember]
         private bool m_gameOver = false;
 
         /// <summary>

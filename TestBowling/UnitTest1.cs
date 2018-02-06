@@ -11,6 +11,16 @@ using System.Runtime.Serialization.Json;
 
 namespace TestBowling
 {
+    [DataContract]
+    internal class Person
+    {
+        [DataMember]
+        internal string name;
+
+        [DataMember]
+        internal int age;
+    }
+
     public class BowlingScoreControlModelFake : IBowlingScoreControlModel
     {
         public int[] frames = new int[10];
@@ -292,6 +302,24 @@ namespace TestBowling
             Assert.AreEqual("T.C.B.(1)", initials[9]);
             Assert.AreEqual("H.H.O.I.B.G.", initials[10]);            
         }
+
+        [TestMethod]
+        public void TestJsonizeDeJsonize()
+        {
+            Person p = new Person();
+            p.name = "John";
+            p.age = 42;
+
+            string json = ThisAndThat.Jsonize<Person>(p);
+            Console.Write("\n" + json + "\n");
+
+            Person p2 = ThisAndThat.DeJsonize<Person>(json);
+            Console.WriteLine("name: " + p2.name);
+            Console.WriteLine("age: " + p2.age);
+            Assert.AreEqual(p.name, p2.name);
+            Assert.AreEqual(p.age, p2.age);
+
+        }
     }
 
     public class MyAppFake : IMyApp
@@ -447,17 +475,7 @@ namespace TestBowling
 
     [TestClass]
     public class MongoTests
-    {
-        [DataContract]
-        internal class Person
-        {
-            [DataMember]
-            internal string name;
-
-            [DataMember]
-            internal int age;
-        }
-
+    {   
         [TestMethod]
         //http://mongodb.github.io/mongo-csharp-driver/2.4/getting_started/quick_tour/
         public void TestTryIt()
@@ -484,7 +502,7 @@ namespace TestBowling
             BsonElement value;
             foundDocument.TryGetElement("type", out value);
             string vs = value.ToString();
-            Console.WriteLine("value:" + vs); 
+            Console.WriteLine("value:" + vs);
         }
 
         [TestMethod]
@@ -492,8 +510,8 @@ namespace TestBowling
         {
             Person p = new Person();
             p.name = "John";
-            p.age = 42;             
-            
+            p.age = 42;
+
             MemoryStream stream1 = new MemoryStream();
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(Person));
             ser.WriteObject(stream1, p);     //Verweis auf System.Xml
@@ -508,17 +526,108 @@ namespace TestBowling
             var database = client.GetDatabase("foo");
 
             var collection = database.GetCollection<BsonDocument>("persons");
-            var document = BsonDocument.Parse(jsonString);            
+            var document = BsonDocument.Parse(jsonString);
             collection.InsertOne(document);
 
             var filter = Builders<BsonDocument>.Filter.Eq("age", 42);
             var foundDocument = collection.Find(filter).First();
             BsonElement value;
             foundDocument.TryGetElement("age", out value);
-            int age = value.Value.ToInt32();            
+            int age = value.Value.ToInt32();
             Console.WriteLine("value:" + age);
             Assert.AreEqual(42, age);
+        }
 
+        [TestMethod]
+        public void TestBowlingScoreModelSerialization()
+        {
+            BowlingScoreControlModel m = new BowlingScoreControlModel("Elmer Fudd", "E.F.");
+            
+            //two strikes, 5 spares
+            int[] example = new int[]
+            {5,2,5,3,2,1,0,5,6,2,1,8,4,0,5,4,2,3,7,1};            
+            var bowling = new BowlingScoreControlControler(m);
+
+            //play
+            int loops = 0;
+            foreach (int pins in example)
+            {
+                loops++;
+                bowling.justAnotherBallThrown(pins);
+                if (m.GameOver)
+                    break;
+            }
+
+            Assert.IsTrue(m.GameOver);
+            Assert.AreEqual(loops, example.Length);
+
+            //check
+            int[] frameScores = new int[]
+                {7,15,18,23,31,40,44,53,58,66};
+            Assert.AreEqual(m.FrameScore.Length, 10);
+            for (int i = 0; i < 10; i++)
+            {
+                Assert.AreEqual(frameScores[i], Convert.ToInt32(m.FrameScore[i]));
+            }            
+
+            //balls?
+            for (int i = 0; i < example.Length; i++)
+            {
+                Assert.IsTrue(example[i] == Convert.ToInt32(m.Balls[i]));
+
+            }
+
+            string json = ThisAndThat.Jsonize<BowlingScoreControlModel>(m);
+            Console.WriteLine(json);
+
+            BowlingScoreControlModel modelBackAgain = ThisAndThat.DeJsonize<BowlingScoreControlModel>(json);
+           
+            Assert.AreEqual(modelBackAgain.FrameScore.Length, 10);
+            for (int i = 0; i < 10; i++)
+            {
+                Assert.AreEqual(frameScores[i], Convert.ToInt32(modelBackAgain.FrameScore[i]));
+            }
+
+            //balls?
+            for (int i = 0; i < example.Length; i++)
+            {
+                Assert.IsTrue(example[i] == Convert.ToInt32(modelBackAgain.Balls[i]));
+
+            }
+            Assert.AreEqual("Elmer Fudd", modelBackAgain.Player);
+            Assert.AreEqual("E.F.", modelBackAgain.PlayersInitials);
+        }
+
+        [TestMethod]
+        public void TestMongoBowlingSave()
+        {
+            #region prepare
+            BowlingScoreControlModel m = new BowlingScoreControlModel("Elmer Fudd", "E.F.");
+
+            //two strikes, 5 spares
+            int[] example = new int[]
+            {5,2,5,3,2,1,0,5,6,2,1,8,4,0,5,4,2,3,7,1};
+            var bowling = new BowlingScoreControlControler(m);
+
+            //play
+            int loops = 0;
+            foreach (int pins in example)
+            {
+                loops++;
+                bowling.justAnotherBallThrown(pins);
+                if (m.GameOver)
+                    break;
+            }
+            string json = ThisAndThat.Jsonize<BowlingScoreControlModel>(m);
+            Console.WriteLine(json);
+            #endregion
+
+            var client = new MongoClient("mongodb://localhost:27017");
+            var database = client.GetDatabase("bowling_games");
+
+            var collection = database.GetCollection<BsonDocument>("game");
+            var document = BsonDocument.Parse(json);
+            collection.InsertOne(document); 
         }
     }
 }

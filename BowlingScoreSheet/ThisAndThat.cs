@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,6 +10,41 @@ namespace BowlingScoreSheet
 {
     public class ThisAndThat
     {
+        public static string Jsonize(Type t, object o)
+        {
+            MemoryStream stream1 = new MemoryStream();
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(t);
+            ser.WriteObject(stream1, o);     //Verweis auf System.Xml
+
+            stream1.Position = 0;
+            StreamReader sr = new StreamReader(stream1);
+            string jsonString = sr.ReadToEnd();
+
+            return jsonString;
+        }
+
+        public static string Jsonize<T>(T o)
+        {
+            MemoryStream stream1 = new MemoryStream();
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(T));
+            ser.WriteObject(stream1, o);     //Verweis auf System.Xml
+
+            stream1.Position = 0;
+            StreamReader sr = new StreamReader(stream1);
+            string jsonString = sr.ReadToEnd();
+
+            return jsonString;
+        }
+
+        public static T DeJsonize<T>(string json)
+        {
+            MemoryStream stream1 = new MemoryStream(Encoding.UTF8.GetBytes(json));            
+            stream1.Position = 0;
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(T));
+            object o = ser.ReadObject(stream1);
+            return (T)o;
+        }
+
         public static string[] playersInitials(string[] players)
         {
             if (players == null)
