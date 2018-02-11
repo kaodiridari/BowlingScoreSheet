@@ -81,6 +81,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ConfigBowlingDialog.cs" />
+    <Compile Include="IPersistence.cs" />
+    <Compile Include="Mongo.cs" />
     <Compile Include="MyApp.cs" />
     <Compile Include="PlayersDialog.xaml.cs">
       <DependentUpon>PlayersDialog.xaml</DependentUpon>

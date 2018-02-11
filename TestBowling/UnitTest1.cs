@@ -8,6 +8,9 @@ using MongoDB.Bson;
 using System.Runtime.Serialization; //needs System.Runtime.Serialization.dll "Verweis"
 using System.IO;
 using System.Runtime.Serialization.Json;
+using MongoDB.Bson.IO;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Bson.Serialization;
 
 namespace TestBowling
 {
@@ -318,7 +321,37 @@ namespace TestBowling
             Console.WriteLine("age: " + p2.age);
             Assert.AreEqual(p.name, p2.name);
             Assert.AreEqual(p.age, p2.age);
+        }
 
+        [TestMethod]
+        public void TestJsonizeDeJsonizeList()
+        {
+            Person p1 = new Person();
+            p1.name = "John";
+            p1.age = 42;
+
+            Person p2 = new Person();
+            p2.name = "Peter";
+            p2.age = 22;
+
+            List<Person> persons = new List<Person>();
+            persons.Add(p1);
+            persons.Add(p2);
+
+            string json = ThisAndThat.Jsonize< List<Person> >(persons);
+            Console.Write("\n" + json + "\n");
+
+            List < Person > dejsonList = ThisAndThat.DeJsonize<List<Person>>(json);
+            Console.WriteLine("name: " + dejsonList[0].name);
+            Console.WriteLine("age: " + dejsonList[0].age);
+            Assert.AreEqual(dejsonList[0].name, p1.name);
+            Assert.AreEqual(dejsonList[0].age, p1.age);
+        }
+
+        [TestMethod]
+        public void TestConfigFile()
+        {
+            ThisAndThat.LoadConfigFile();
         }
     }
 
@@ -335,6 +368,11 @@ namespace TestBowling
             {
                 throw new NotImplementedException();
             }
+        }
+
+        public void SetPersistence(IPersistence p)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -539,6 +577,155 @@ namespace TestBowling
         }
 
         [TestMethod]
+        public void TestJsonBsonList()
+        {
+            Person p1 = new Person();
+            p1.name = "John";
+            p1.age = 42;
+
+            Person p2 = new Person();
+            p2.name = "Peter";
+            p2.age = 22;
+
+            List<Person> persons = new List<Person>();
+            persons.Add(p1);
+            persons.Add(p2);
+
+            string json = ThisAndThat.Jsonize<List<Person>>(persons);
+            var jsonReader = new JsonReader(json);
+            var serializer = new BsonArraySerializer();
+            BsonArray bsonArray = serializer.Deserialize(BsonDeserializationContext.CreateRoot(jsonReader));
+            
+            var client = new MongoClient("mongodb://localhost:27017");
+            var database = client.GetDatabase("personList"); 
+            var collection = database.GetCollection<BsonDocument>("persons");
+            var document = new BsonDocument();
+            DateTime dt = DateTime.Now.ToUniversalTime();
+            BsonDateTime bdt = BsonDateTime.Create(dt);
+            document.Add("insertedAt", bdt);
+            document.Add("blah", bsonArray);
+            collection.InsertOne(document);
+            System.Console.WriteLine("dt: " + dt);
+            System.Console.WriteLine("bdt: " + bdt);
+            //find 2018-02-09T23:40:02.161Z
+
+        }
+
+        [TestMethod]
+        public void TestJsonBsonListFindGt()
+        {
+            var client = new MongoClient("mongodb://localhost:27017");
+            var database = client.GetDatabase("personList");
+            var collection = database.GetCollection<BsonDocument>("persons");
+            var tosearch = DateTime.Parse("2018-02-10T01:39:57.296Z");
+            tosearch = tosearch.AddYears(-5).ToUniversalTime();
+            //find 2018-02-09T23:40:02.161Z
+            var filter = Builders<BsonDocument>.Filter.Gt("insertedAt", tosearch);   //das geht
+            var foundCollection = collection.Find(filter);
+            if (foundCollection.Count() != 0)
+            {
+                var foundDocument = collection.Find(filter).First();
+                BsonElement value;
+                foundDocument.TryGetElement("blah", out value);
+                string json = value.ToJson();
+            }
+        }
+
+        [TestMethod]
+        public void TestJsonBsonListFindEq()
+        {
+            var client = new MongoClient("mongodb://localhost:27017");
+            var database = client.GetDatabase("personList");
+            var collection = database.GetCollection<BsonDocument>("persons");
+            var tosearch = DateTime.Parse("2018-02-10T01:35:28.639Z");
+            tosearch = tosearch.ToUniversalTime();
+            //find 2018-02-09T23:40:02.161Z
+            var filter = Builders<BsonDocument>.Filter.Eq("insertedAt", tosearch);   //das geht
+            var foundCollection = collection.Find(filter);
+            if (foundCollection.Count() != 0)
+            {
+                var foundDocument = collection.Find(filter).First();
+                BsonElement value;
+                foundDocument.TryGetElement("blah", out value);
+                string json = value.ToJson();
+                BsonElement time;
+                foundDocument.TryGetElement("insertedAt", out time);
+                
+                Console.WriteLine("Mongo: " + time.ToString());
+                var universial = time.Value.ToUniversalTime();
+                Console.WriteLine("universial:" + universial);
+                Console.WriteLine("universial.Ticks:" + universial.Ticks);
+            }
+        }
+
+        [TestMethod]
+        public void TestJsonBsonListFindEq2()
+        {
+            var tosearch = DateTime.Now;
+            tosearch = tosearch.ToUniversalTime();
+            {
+                Person p1 = new Person();
+                p1.name = "John";
+                p1.age = 42;
+
+                Person p2 = new Person();
+                p2.name = "Peter";
+                p2.age = 22;
+
+                List<Person> persons = new List<Person>();
+                persons.Add(p1);
+                persons.Add(p2);
+
+                string json = ThisAndThat.Jsonize<List<Person>>(persons);
+                var jsonReader = new JsonReader(json);
+                var serializer = new BsonArraySerializer();
+                BsonArray bsonArray = serializer.Deserialize(BsonDeserializationContext.CreateRoot(jsonReader));
+
+                var client = new MongoClient("mongodb://localhost:27017");
+                var database = client.GetDatabase("personList");
+                var collection = database.GetCollection<BsonDocument>("persons");
+                var document = new BsonDocument();
+                
+                BsonDateTime bdt = BsonDateTime.Create(tosearch);
+                document.Add("insertedAt", bdt);
+                document.Add("blah", bsonArray);
+                collection.InsertOne(document);
+                System.Console.WriteLine("dt: " + tosearch);
+                System.Console.WriteLine("bdt: " + bdt);
+            }
+            {
+                var client = new MongoClient("mongodb://localhost:27017");
+                var database = client.GetDatabase("personList");
+                var collection = database.GetCollection<BsonDocument>("persons");
+                
+                //find 2018-02-09T23:40:02.161Z
+                var filter = Builders<BsonDocument>.Filter.Eq("insertedAt", tosearch);   //das geht
+                var foundCollection = collection.Find(filter);
+                if (foundCollection.Count() != 0)
+                {
+                    var foundDocument = collection.Find(filter).First();
+                    BsonElement be;
+                    foundDocument.TryGetElement("blah", out be);
+                    string json = be.Value.ToJson();
+                    Console.WriteLine("json: " + json);
+                    var li = ThisAndThat.DeJsonize<List<Person>>(json);
+                    Assert.AreEqual(2, li.Count);
+                    BsonElement time;
+                    foundDocument.TryGetElement("insertedAt", out time);
+
+                    Console.WriteLine("Mongo: " + time.ToString());
+                    var universial = time.Value.ToUniversalTime();
+                    Console.WriteLine("universial:" + universial);
+                    Console.WriteLine("universial.Ticks:" + universial.Ticks);
+                } else
+                {
+                    Assert.Fail("Nothing found. Date: " + tosearch);
+                }
+            }
+            
+        }
+
+        [TestMethod]
         public void TestBowlingScoreModelSerialization()
         {
             BowlingScoreControlModel m = new BowlingScoreControlModel("Elmer Fudd", "E.F.");
@@ -623,11 +810,134 @@ namespace TestBowling
             #endregion
 
             var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("bowling_games");
-
+            var database = client.GetDatabase("bowling_games"); 
             var collection = database.GetCollection<BsonDocument>("game");
-            var document = BsonDocument.Parse(json);
-            collection.InsertOne(document); 
+
+            var document = new BsonDocument();
+            DateTime dt = DateTime.Now.ToUniversalTime();
+            BsonDateTime bdt = BsonDateTime.Create(dt);
+            document.Add("insertedAt", bdt);
+                       
+            collection.InsertOne(document);
+
+            
+        }
+
+        [TestMethod]
+        public void TestMongoBowlingSaveGet()
+        {
+            DateTime tosearch;
+            string[] names = new string[] { "Elmer Fudd", "Bugs Bunny", "Daffy Duck" };
+            var initials = ThisAndThat.playersInitials(names);
+            {
+                #region prepare
+                BowlingScoreControlModel m1 = new BowlingScoreControlModel(names[0], initials[0]);
+                BowlingScoreControlModel m2 = new BowlingScoreControlModel(names[1], initials[1]);
+                BowlingScoreControlModel m3 = new BowlingScoreControlModel(names[2], initials[2]);
+                BowlingScoreControlModel[] ms = new BowlingScoreControlModel[] { m1, m2, m3 };
+                //two strikes, 5 spares
+                int[] example = new int[] { 5, 2, 5, 3, 2, 1, 0, 5, 6, 2, 1, 8, 4, 0, 5, 4, 2, 3, 7, 1 };
+                int[] example1 = new int[] { 1, 4, 4, 5, 6, 4, 5, 5, 10, 0, 1, 7, 3, 6, 4, 10, 2, 8, 6 };
+                int[] example2 = new int[] { 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 };
+                List<int[]> li = new List<int[]>();
+                li.Add(example);
+                li.Add(example1);
+                li.Add(example2);
+                var jsons = new List<string>();
+
+                for (int i = 0; i < ms.Length; i++)
+                {
+                    var bowling = new BowlingScoreControlControler(ms[i]);
+
+                    //play
+                    int loops = 0;
+                    foreach (int pins in li[i])
+                    {
+                        loops++;
+                        bowling.justAnotherBallThrown(pins);
+                        if (ms[i].GameOver)
+                            break;
+                    }
+
+
+                    string json1 = ThisAndThat.Jsonize<BowlingScoreControlModel>(ms[i]);
+                    Console.WriteLine(json1);
+                    jsons.Add(json1);
+                }
+
+                #endregion
+
+                var client = new MongoClient("mongodb://localhost:27017");
+                var database = client.GetDatabase("bowling_games");
+                var collection = database.GetCollection<BsonDocument>("game");
+
+                string json = ThisAndThat.Jsonize<BowlingScoreControlModel[]>(ms);
+                var jsonReader = new JsonReader(json);
+                var serializer = new BsonArraySerializer();
+                BsonArray bsonArray = serializer.Deserialize(BsonDeserializationContext.CreateRoot(jsonReader));
+
+                var document = new BsonDocument();
+                tosearch = DateTime.Now.ToUniversalTime();
+                BsonDateTime bdt = BsonDateTime.Create(tosearch);
+                document.Add("insertedAt", bdt);
+                document.Add("aGame", bsonArray);
+                collection.InsertOne(document);
+                System.Console.WriteLine("dt: " + tosearch);
+                System.Console.WriteLine("bdt: " + bdt);
+            } 
+            {
+                var client = new MongoClient("mongodb://localhost:27017");
+                var database = client.GetDatabase("bowling_games");
+                var collection = database.GetCollection<BsonDocument>("game");
+                
+                var filter = Builders<BsonDocument>.Filter.Eq("insertedAt", tosearch);   //das geht
+                var foundCollection = collection.Find(filter);
+                if (foundCollection.Count() != 0)
+                {
+                    var foundDocument = collection.Find(filter).First();
+                    BsonElement be;
+                    foundDocument.TryGetElement("aGame", out be);
+                    string json = be.Value.ToJson();
+                    Console.WriteLine("json: " + json);
+                    var li = ThisAndThat.DeJsonize<List<BowlingScoreControlModel>>(json);
+                    Assert.AreEqual(3, li.Count);
+                    for (int i = 0; i < names.Length; i++)
+                    {
+                        Assert.IsTrue(li.Exists(m => m.Player.Equals(names[i])));
+                    }
+                    
+                    BsonElement time;
+                    foundDocument.TryGetElement("insertedAt", out time);
+
+                    Console.WriteLine("Mongo: " + time.ToString());
+                    var universial = time.Value.ToUniversalTime();
+                    Console.WriteLine("universial:" + universial);
+                    Console.WriteLine("universial.Ticks:" + universial.Ticks);
+                    
+                } else
+                {
+                    Assert.Fail();
+                }
+                
+            }
+
+        }
+       
+    }
+
+    [TestClass]
+    public class MongoPersistenceTests
+    {
+        [TestMethod]
+        public void TestGetTimeintervall()
+        {
+
+        }
+
+        [TestMethod]
+        public void TestGetPlayers()
+        {
+
         }
     }
 }

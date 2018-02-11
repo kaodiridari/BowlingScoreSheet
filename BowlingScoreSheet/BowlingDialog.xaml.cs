@@ -141,7 +141,7 @@ namespace BowlingScoreSheet
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
         {
-
+            m_bowlingDialogControler.Save();
         }
     }
 }

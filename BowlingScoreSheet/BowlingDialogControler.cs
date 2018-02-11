@@ -67,5 +67,12 @@ namespace BowlingScoreSheet
             string[] ids = m_bowlingDialogModel.GetPlayersIds();
             return ids;
         }
+
+        public void Save()
+        {            
+            BowlingScoreControlModel[] models = m_bowlingDialogModel.GetBowlingScoreControlModels();
+            string json = ThisAndThat.Jsonize<BowlingScoreControlModel[]>(models);
+            MyApp.getInstance().Save(json);
+        }
     }
 }

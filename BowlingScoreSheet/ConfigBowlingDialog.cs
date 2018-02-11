@@ -11,7 +11,6 @@ namespace BowlingScoreSheet
     /// </summary>
     public class ConfigBowlingDialog
     {
-
         public ConfigBowlingDialog(IBowlingDialog bd, IMyApp myApp)
         {
             string[] players = myApp.Players;
@@ -40,6 +39,7 @@ namespace BowlingScoreSheet
             bd.SetBowlingDialogModel(bowlingDialogModel);
             bd.SetBowlingScoreControlControlers(bowlingScoreControlControlers);
             bd.SetBowlingScoreControlModels(bowlingScoreControlModels);
+            myApp.SetPersistence(new Mongo());
         }
     }
 
@@ -49,6 +49,7 @@ namespace BowlingScoreSheet
         void SetBowlingDialogModel(BowlingDialogModel bowlingDialogModel);
         void SetBowlingScoreControlControlers(BowlingScoreControlControler[] bowlingScoreControlControlers);
         void SetBowlingScoreControlModels(BowlingScoreControlModel[] bowlingScoreControlModels);
+        //void SetPersistence(IPersistence p);
         void SetPlayers(string[] players);
     }
 }

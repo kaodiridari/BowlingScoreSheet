@@ -71,6 +71,11 @@ namespace BowlingScoreSheet
             UpdateProperty("IsNewGame");
         }
 
+        internal BowlingScoreControlModel[] GetBowlingScoreControlModels()
+        {
+            return m_BowlingScoreControlModels;
+        }
+
         public void setButtonsEnabled(int lastEnabledIndex)
         {
             m_isButtonEnabled = new bool[11];

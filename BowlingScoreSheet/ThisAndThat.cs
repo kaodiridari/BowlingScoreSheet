@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.XPath;
 
 namespace BowlingScoreSheet
 {
@@ -23,6 +25,23 @@ namespace BowlingScoreSheet
             return jsonString;
         }
 
+        /// <summary>
+        /// Returns a Json-Object. Works with single objects and lists.
+        /// 
+        /// Don't forget [DataContract], and [DataMember] in your class:<br>
+        /// [DataContract]
+        /// internal class Person
+        /// {
+        ///     [DataMember]
+        ///     internal string name;
+        /// 
+        ///     [DataMember]
+        ///     internal int age;
+        /// }
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="o"></param>
+        /// <returns></returns>
         public static string Jsonize<T>(T o)
         {
             MemoryStream stream1 = new MemoryStream();
@@ -89,6 +108,20 @@ namespace BowlingScoreSheet
                 initials[i] = name;
             }
             return initials;
+        }
+
+        public static XPathNavigator LoadConfigFile()
+        {
+            //string path1 = Path.GetDirectoryName(Assembly.GetAssembly(typeof(MyApp)).CodeBase);
+            string path2 = System.AppDomain.CurrentDomain.BaseDirectory;    //bin/debug                                                                             
+
+            string appName = "BowlingScoreSheet";
+            int i = path2.IndexOf(appName);
+            string file = path2.Substring(0, i + appName.Length+1) + "config.xml";
+                       
+            XPathDocument doc = new XPathDocument(file);
+            XPathNavigator navigator = doc.CreateNavigator();
+            return navigator;
         }
     }
 }
