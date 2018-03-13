@@ -5,6 +5,7 @@
       <connection_string>mongodb://localhost:27017</connection_string>
       <database>bowling_games_test</database>
       <collection>game</collection>
+      <max_documents_limit>111</max_documents_limit>
     </mongo>
   </database>
 </config>

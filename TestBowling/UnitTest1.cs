@@ -960,32 +960,32 @@ namespace TestBowling
             Console.WriteLine("Initialized");           
         }
 
-        [TestMethod]
-        public void TestGetTimeintervallProbiers()
-        {
-            //http://mongodb.github.io/mongo-csharp-driver/2.4/reference/driver/definitions/ 
-            var client = new MongoClient();
+        //[TestMethod]
+        //public void TestGetTimeintervallProbiers()
+        //{
+        //    //http://mongodb.github.io/mongo-csharp-driver/2.4/reference/driver/definitions/ 
+        //    var client = new MongoClient();
 
-            var builder = Builders<BsonDocument>.Filter;
-            var app = MyApp.getInstance();
-            IMongoDatabase db = client.GetDatabase(app.GetConfig("/config/database/mongo/database"));
-            var collection = db.GetCollection<BsonDocument>(app.GetConfig("/config/database/mongo/collection"));
+        //    var builder = Builders<BsonDocument>.Filter;
+        //    var app = MyApp.getInstance();
+        //    IMongoDatabase db = client.GetDatabase(app.GetConfig("/config/database/mongo/database"));
+        //    var collection = db.GetCollection<BsonDocument>(app.GetConfig("/config/database/mongo/collection"));
 
-            DateTime dt1 = DateTime.Now.ToUniversalTime().AddHours(-2);
-            DateTime dt2 = DateTime.Now.ToUniversalTime().AddHours(2);
-            var filter = builder.Lte("insertedAt", dt2) & builder.Gte("insertedAt", dt1);
-            //execute
-            var cursor = collection.Find(filter);
-            Assert.AreEqual(2, cursor.Count());
+        //    DateTime dt1 = DateTime.Now.ToUniversalTime().AddHours(-2);
+        //    DateTime dt2 = DateTime.Now.ToUniversalTime().AddHours(2);
+        //    var filter = builder.Lte("insertedAt", dt2) & builder.Gte("insertedAt", dt1);
+        //    //execute
+        //    var cursor = collection.Find(filter);
+        //    Assert.AreEqual(2, cursor.Count());
 
-            filter = builder.Gt("insertedAt", this.afterFirst) & builder.Lte("insertedAt", this.afterSecond);
-            cursor = collection.Find(filter);
-            Assert.AreEqual(1, cursor.Count());
-            var doc2 = cursor.Single();
-            //m_player\":\"Porky Pig\"
-            var val = doc2.GetElement("aGame");
-            Console.WriteLine(val.ToJson().ToString());            
-        }
+        //    filter = builder.Gt("insertedAt", this.afterFirst) & builder.Lte("insertedAt", this.afterSecond);
+        //    cursor = collection.Find(filter);
+        //    Assert.AreEqual(1, cursor.Count());
+        //    var doc2 = cursor.Single();
+        //    //m_player\":\"Porky Pig\"
+        //    var val = doc2.GetElement("aGame");
+        //    Console.WriteLine(val.ToJson().ToString());            
+        //}
 
         [TestMethod]
         public void TestGetTimeintervall()

@@ -48,7 +48,8 @@ namespace BowlingScoreSheet
             DateTime dt2 = DateTime.Now.ToUniversalTime().AddHours(2);
             var filter = builder.Lte("insertedAt", dt2) & builder.Gte("insertedAt", dt1);
             //execute
-            var cursor = collection.Find(filter);
+            var cursor = collection.Find(filter).Limit(
+                Convert.ToInt32(app.GetConfig("/config/database/mongo/max_documents_limit")));
             var li = cursor.ToList<BsonDocument>();
             string[] retVal = new string[li.Count];
             int i = 0;
