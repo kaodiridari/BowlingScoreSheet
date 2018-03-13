@@ -72,7 +72,7 @@ namespace BowlingScoreSheet
         {            
             BowlingScoreControlModel[] models = m_bowlingDialogModel.GetBowlingScoreControlModels();
             string json = ThisAndThat.Jsonize<BowlingScoreControlModel[]>(models);
-            MyApp.getInstance().Save(json);
+            MyApp.getInstance().GetPersistence().Save(json);
         }
     }
 }

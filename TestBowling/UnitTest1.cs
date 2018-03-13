@@ -11,6 +11,8 @@ using System.Runtime.Serialization.Json;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Bson.Serialization;
+using System.Windows;
+using System.Threading;
 
 namespace TestBowling
 {
@@ -351,7 +353,7 @@ namespace TestBowling
         [TestMethod]
         public void TestConfigFile()
         {
-            ThisAndThat.LoadConfigFile();
+            ThisAndThat.LoadConfigFile("testconfig.xml");
         }
     }
 
@@ -368,6 +370,11 @@ namespace TestBowling
             {
                 throw new NotImplementedException();
             }
+        }
+
+        public void SetConfigFile(string file)
+        {
+            throw new NotImplementedException();
         }
 
         public void SetPersistence(IPersistence p)
@@ -928,16 +935,83 @@ namespace TestBowling
     [TestClass]
     public class MongoPersistenceTests
     {
+        private string testconfig = "testconfig.xml";
+        private DateTime afterFirst;
+        private DateTime afterSecond;
+
+        [TestInitialize()]
+        public void Initialize()
+        {
+            Cleanup();
+            //write values to MongoDb
+            string json1 = "[{\"m_FrameScore\":[\"3\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_ball\":[\"3\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_gameOver\":false,\"m_player\":\"Peter Handke\",\"m_playersId\":\"P.H.\"},{\"m_FrameScore\":[\"6\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_ball\":[\"6\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_gameOver\":false,\"m_player\":\"Günther Grass\",\"m_playersId\":\"G.G.\"},{\"m_FrameScore\":[\"8\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_ball\":[\"8\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_gameOver\":false,\"m_player\":\"Siegfried Lenz\",\"m_playersId\":\"S.L.\"},{\"m_FrameScore\":[\"9\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_ball\":[\"9\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_gameOver\":false,\"m_player\":\"Heinrich Böll\",\"m_playersId\":\"H.B.\"},{\"m_FrameScore\":[\"10\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_ball\":[\"10\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_gameOver\":false,\"m_player\":\"Wolfgang Borchert\",\"m_playersId\":\"W.B.\"},{\"m_FrameScore\":[\"0\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_ball\":[\"0\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_gameOver\":false,\"m_player\":\"Sten Nadolny\",\"m_playersId\":\"S.N.\"},{\"m_FrameScore\":[\"9\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_ball\":[\"9\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_gameOver\":false,\"m_player\":\"Wolf Haas\",\"m_playersId\":\"W.H.\"}]";
+            string json2 = "[{\"m_FrameScore\":[\"4\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_ball\":[\"4\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_gameOver\":false,\"m_player\":\"Elmer Fudd\",\"m_playersId\":\"E.F.\"},{\"m_FrameScore\":[\"7\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_ball\":[\"7\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_gameOver\":false,\"m_player\":\"Bugs Bunny\",\"m_playersId\":\"B.B.\"},{\"m_FrameScore\":[\"9\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_ball\":[\"9\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_gameOver\":false,\"m_player\":\"Daffy Duck\",\"m_playersId\":\"D.D.\"},{\"m_FrameScore\":[\"10\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_ball\":[\"10\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"],\"m_gameOver\":false,\"m_player\":\"Porky Pig\",\"m_playersId\":\"P.P.\"}]";
+        
+            
+            MyApp app = MyApp.getInstance();
+            app.SetPersistence(new Mongo());
+            app.SetConfigFile(testconfig);
+
+            app.GetPersistence().Save(json1);
+            afterFirst = DateTime.Now.ToUniversalTime();
+            Thread.Sleep(2000);
+            app.GetPersistence().Save(json2);
+            afterSecond = DateTime.Now.ToUniversalTime();
+            Console.WriteLine("Initialized");           
+        }
+
+        [TestMethod]
+        public void TestGetTimeintervallProbiers()
+        {
+            //http://mongodb.github.io/mongo-csharp-driver/2.4/reference/driver/definitions/ 
+            var client = new MongoClient();
+
+            var builder = Builders<BsonDocument>.Filter;
+            var app = MyApp.getInstance();
+            IMongoDatabase db = client.GetDatabase(app.GetConfig("/config/database/mongo/database"));
+            var collection = db.GetCollection<BsonDocument>(app.GetConfig("/config/database/mongo/collection"));
+
+            DateTime dt1 = DateTime.Now.ToUniversalTime().AddHours(-2);
+            DateTime dt2 = DateTime.Now.ToUniversalTime().AddHours(2);
+            var filter = builder.Lte("insertedAt", dt2) & builder.Gte("insertedAt", dt1);
+            //execute
+            var cursor = collection.Find(filter);
+            Assert.AreEqual(2, cursor.Count());
+
+            filter = builder.Gt("insertedAt", this.afterFirst) & builder.Lte("insertedAt", this.afterSecond);
+            cursor = collection.Find(filter);
+            Assert.AreEqual(1, cursor.Count());
+            var doc2 = cursor.Single();
+            //m_player\":\"Porky Pig\"
+            var val = doc2.GetElement("aGame");
+            Console.WriteLine(val.ToJson().ToString());            
+        }
+
         [TestMethod]
         public void TestGetTimeintervall()
         {
-
+            //http://mongodb.github.io/mongo-csharp-driver/2.4/reference/driver/definitions/ 
+            var app = MyApp.getInstance();
+            string[] ret = app.GetPersistence().Get(this.afterFirst, this.afterSecond);
+            Assert.AreEqual(2, ret.Length);
         }
 
         [TestMethod]
         public void TestGetPlayers()
         {
+            
+        }
 
+        [TestCleanup()]
+        public void Cleanup()
+        {
+            //delete all
+            var navi = ThisAndThat.LoadConfigFile(testconfig);
+            var client = new MongoClient(navi.SelectSingleNode("/config/database/mongo/connection_string").Value);
+            var database = client.GetDatabase(navi.SelectSingleNode("/config/database/mongo/database").Value);
+            //This removes also the database ...
+            database.DropCollection(navi.SelectSingleNode("/config/database/mongo/collection").Value);
+            Console.WriteLine("Cleaned up.");
         }
     }
 }

@@ -16,15 +16,22 @@ namespace BowlingScoreSheet
         string[] Players { get; set; }
 
         void SetPersistence(IPersistence p);
+
+        /// <summary>
+        /// Set the config file; It is in the Folder SolutionItems.
+        /// </summary>
+        /// <param name="file">Just the name: eg config.xml</param>
+        void SetConfigFile(string file);
     }
 
     public class MyApp : IMyApp
     {
         private static MyApp me;
 
-        private XPathNavigator m_config;        
+        private XPathNavigator xpathnavigator;        
 
         private IPersistence p;
+        private string m_configFile;
 
         private MyApp()
         {
@@ -54,18 +61,28 @@ namespace BowlingScoreSheet
             this.p = p;
         }
 
-        public void Save(string json)
+        public IPersistence GetPersistence()
         {
-            p.Save(json);
+            return p;
         }
 
-        internal string GetConfig(string xpath)
+        //public void Save(string json)
+        //{
+        //    p.Save(json);
+        //}
+
+        public string GetConfig(string xpath)
         {
-            if (m_config == null)
+            if (xpathnavigator == null)
             {
-                m_config = ThisAndThat.LoadConfigFile();   
+                xpathnavigator = ThisAndThat.LoadConfigFile(m_configFile);   
             }
-            return m_config.SelectSingleNode(xpath).Value;             
+            return xpathnavigator.SelectSingleNode(xpath).Value;             
+        }
+
+        public void SetConfigFile(string file)
+        {
+            m_configFile = file;
         }
     }
 }

@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<config>
+  <database>
+    <mongo>
+      <connection_string>mongodb://localhost:27017</connection_string>
+      <database>bowling_games_test</database>
+      <collection>game</collection>
+    </mongo>
+  </database>
+</config>

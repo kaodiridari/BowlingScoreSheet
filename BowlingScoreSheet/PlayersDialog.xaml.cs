@@ -46,8 +46,8 @@ namespace BowlingScoreSheet
 
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
-            string[] p = {"Peter Handke", "Günther Grass", "Siegfried Lenz", "Heinrich Böll",
-                "Wolfgang Borchert", "Sten Nadolny", "Wolf Haas"};
+            string[] p = {"Peter Handke", "Günther Grass", "Siegfried Lenz", "Heinrich Böll", "Wolfgang Borchert", "Sten Nadolny", "Wolf Haas"};
+            p = new string[] { "Elmer Fudd", "Bugs Bunny", "Daffy Duck", "Porky Pig"};
             var doc = MyApp.getInstance();
             doc.Players = p;
             doc.PlayersDialogDone();

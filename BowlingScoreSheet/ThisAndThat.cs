@@ -110,14 +110,14 @@ namespace BowlingScoreSheet
             return initials;
         }
 
-        public static XPathNavigator LoadConfigFile()
+        public static XPathNavigator LoadConfigFile(string configFileNameWithoutPath)
         {
             //string path1 = Path.GetDirectoryName(Assembly.GetAssembly(typeof(MyApp)).CodeBase);
             string path2 = System.AppDomain.CurrentDomain.BaseDirectory;    //bin/debug                                                                             
 
             string appName = "BowlingScoreSheet";
             int i = path2.IndexOf(appName);
-            string file = path2.Substring(0, i + appName.Length+1) + "config.xml";
+            string file = path2.Substring(0, i + appName.Length+1) + configFileNameWithoutPath;
                        
             XPathDocument doc = new XPathDocument(file);
             XPathNavigator navigator = doc.CreateNavigator();
