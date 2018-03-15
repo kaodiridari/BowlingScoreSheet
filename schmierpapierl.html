@@ -23,84 +23,96 @@
 </head>
 <body>
     <h1>Dies und das.</h1>    
-        <div id="blahblah">
-            <h2>31.01.2018</h2>
-            <p>
-                In App.xaml auf BowlingDialog.xaml als Startklasse umgestellt.
-                vorher: StartupUri="PlayersDialog.xaml"
-            </p>
-            <p>
-                Item Template Control wird angezeigt.
-                TODO: Bowling-Dings anzeigen.
-            </p>
-        </div>
-        <div id="blahblah">
-            <h2>01.02.2018</h2>
-            <p>
-                Kann Bowling dings mehrmals anzeigen.
-                beachte Stackpanel und Scrollbars geht nur wenn man height setzt -> schlecht
-                -> Grid ausdenken.
-                https://stackoverflow.com/questions/472796/how-can-i-get-a-vertical-scrollbar-in-my-listbox
-            </p>
-            <p>
-                Jetzt eingegebene namen in den Controls anzeigen.<br/>
-                Mit namensdialog anfangen. <br/>
-                Namen irgendwie in Model schreiben. <br/>
-                Wie kommt BowlingScoreControl zum model???? Konstruktor geht nicht???????<br/>
-
-            </p>
-        </div>
-        <div id="blahblah">
-            <h2>02.02.2018</h2>
-            <p>
-                Bowlingdinger werden angezeigt mit richtigen Initialen.<br />
-            </p>
-            <p>
-                Auswahl Bowlingding geht. Pin-Knopf liefert Wert an richtiges Control.
-            </p>
-        </div>
-        <div id="blahblah">
-            <h2>05.02.2018</h2>
-            <p>
-                BowlingDialog geht<br />
-            </p>
-            <section class="denkdenk">
-                <p>
-                    Spielstand speichern.<br />
-                    Es braucht:<br />
-                </p>
-                <ul>
-                    <li>Spiele-Id</li>
-                    <li>Die einzelnen Bowling-Modelle werden geschrieben.</li>
-                    <li>nett: Element im Focus merken.</li>
-                </ul>
-            </section>
-            <p class="merkmerk">
-                MongoDb Daten Pfad:
-                "C:\Program Files\MongoDB\Server\3.6\bin\mongod.exe" --dbpath "C:\Users\user\test\data\db"
-            </p>
-            <p class="merkmerk">
-                MongoDb shell starten mit:
-                "C:\Program Files\MongoDB\Server\3.6\bin\mongo.exe"
-            </p>
-        </div>
-        <div id="blahblah">
-            <h2>08.02.2018</h2>
-            <p class="fehler">
-                Einschränkung der drückbaren Knöpfe (pins) geht nicht mehr.
-            </p>
-        </div>
-        <div id="blahblah">
-            <h2>11.02.2018</h2>
-            <p>
-                Spielstand speichern geht.
-            </p>
-        </div>
-        <div id="blahblah">
-        <h2>12.02.2018</h2>
-        <p class="fehler">
-            MyApp.SetPersistence <==> 
+    <div id="blahblah">
+        <h2>31.01.2018</h2>
+        <p>
+            In App.xaml auf BowlingDialog.xaml als Startklasse umgestellt.
+            vorher: StartupUri="PlayersDialog.xaml"
         </p>
-        </div>
+        <p>
+            Item Template Control wird angezeigt.
+            TODO: Bowling-Dings anzeigen.
+        </p>
+    </div>
+    <div id="blahblah">
+        <h2>01.02.2018</h2>
+        <p>
+            Kann Bowling dings mehrmals anzeigen.
+            beachte Stackpanel und Scrollbars geht nur wenn man height setzt -> schlecht
+            -> Grid ausdenken.
+            https://stackoverflow.com/questions/472796/how-can-i-get-a-vertical-scrollbar-in-my-listbox
+        </p>
+        <p>
+            Jetzt eingegebene namen in den Controls anzeigen.<br/>
+            Mit namensdialog anfangen. <br/>
+            Namen irgendwie in Model schreiben. <br/>
+            Wie kommt BowlingScoreControl zum model???? Konstruktor geht nicht???????<br/>
+
+        </p>
+    </div>
+    <div id="blahblah">
+        <h2>02.02.2018</h2>
+        <p>
+            Bowlingdinger werden angezeigt mit richtigen Initialen.<br />
+        </p>
+        <p>
+            Auswahl Bowlingding geht. Pin-Knopf liefert Wert an richtiges Control.
+        </p>
+    </div>
+    <div id="blahblah">
+        <h2>05.02.2018</h2>
+        <p>
+            BowlingDialog geht<br />
+        </p>
+        <section class="denkdenk">
+            <p>
+                Spielstand speichern.<br />
+                Es braucht:<br />
+            </p>
+            <ul>
+                <li>Spiele-Id</li>
+                <li>Die einzelnen Bowling-Modelle werden geschrieben.</li>
+                <li>nett: Element im Focus merken.</li>
+            </ul>
+        </section>
+        <p class="merkmerk">
+            MongoDb Daten Pfad:
+            "C:\Program Files\MongoDB\Server\3.6\bin\mongod.exe" --dbpath "C:\Users\user\test\data\db"
+        </p>
+        <p class="merkmerk">
+            MongoDb shell starten mit:
+            "C:\Program Files\MongoDB\Server\3.6\bin\mongo.exe"
+        </p>
+    </div>
+    <div id="blahblah">
+        <h2>08.02.2018</h2>
+        <p class="fehler">
+            Einschränkung der drückbaren Knöpfe (pins) geht nicht mehr.
+        </p>
+    </div>
+    <div id="blahblah">
+        <h2>11.02.2018</h2>
+        <p>
+            Spielstand speichern geht.
+        </p>
+    </div>
+    <div id="blahblah">
+    <h2>12.02.2018</h2>
+    <p class="fehler">
+        MyApp.SetPersistence <==> 
+    </p>
+    </div>
+    <div id="blahblah">
+        <h2>14.03.2018</h2>
+        <p class="denkdenk">
+            Dialog für <br />
+            <div class="sc">string[] IPersistence.Get(DateTime dtStart, DateTime dtEnd)</div><br/>            
+            bauen.<br />
+            ConfigBowlingDialog soll nicht <br/>
+            myApp.SetPersistence(new Mongo());
+            aufrufen (entfernt in BowlingMainWindow eingesetzt -> irgendwie verschiedene Persistence-Arten beachten).
+            MyApp.PlayersDialogDone() entfernt -> PlayersDialog?????
+        </p>
+    </div>
 </body>
 </html>

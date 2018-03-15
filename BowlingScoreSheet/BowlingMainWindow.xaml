@@ -1,0 +1,21 @@
+﻿<Window x:Class="BowlingScoreSheet.BowlingMainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BowlingScoreSheet"        
+        mc:Ignorable="d"
+        Title="BowlingMainWindow" Height="300" Width="1000">
+    <Window.CommandBindings>
+        <CommandBinding Command="local:CustomCommands.SearchInterval"
+                        Executed="SearchIntervalCommand_Executed"
+                        CanExecute="SearchIntervalCommand_CanExecute"/>
+    </Window.CommandBindings>
+    <DockPanel >
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar HorizontalAlignment="Left" VerticalAlignment="Top" Height="31" Width="292">
+                <Button Command="local:CustomCommands.SearchInterval" Content="Search" Height="26" VerticalAlignment="Top" Width="75"/>
+            </ToolBar>
+        </ToolBarTray>
+    </DockPanel>
+</Window>

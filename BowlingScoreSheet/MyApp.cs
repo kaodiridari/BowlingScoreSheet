@@ -49,12 +49,12 @@ namespace BowlingScoreSheet
 
         public string[] Players{get; set;}
 
-        public void PlayersDialogDone()
-        {
-            //Open the BowlingDialog
-            var bd = new BowlingDialog();
-            bd.Show(); ;
-        }
+        //public void PlayersDialogDone()
+        //{
+        //    //Open the BowlingDialog
+        //    var bd = new BowlingDialog();
+        //    bd.Show(); ;
+        //}
 
         public void SetPersistence(IPersistence p)
         {

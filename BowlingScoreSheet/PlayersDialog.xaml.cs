@@ -40,7 +40,7 @@ namespace BowlingScoreSheet
             string[] p = li.ToArray();
             var doc = MyApp.getInstance();
             doc.Players = p;
-            doc.PlayersDialogDone();            
+            //doc.PlayersDialogDone();            
             this.Close();
         }
 
@@ -50,7 +50,7 @@ namespace BowlingScoreSheet
             p = new string[] { "Elmer Fudd", "Bugs Bunny", "Daffy Duck", "Porky Pig"};
             var doc = MyApp.getInstance();
             doc.Players = p;
-            doc.PlayersDialogDone();
+            //doc.PlayersDialogDone();
             this.Close();
         }
     }

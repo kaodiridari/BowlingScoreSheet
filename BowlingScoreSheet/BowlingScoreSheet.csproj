@@ -81,12 +81,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BowlingMainWindow.xaml.cs">
+      <DependentUpon>BowlingMainWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ConfigBowlingDialog.cs" />
     <Compile Include="IPersistence.cs" />
     <Compile Include="Mongo.cs" />
     <Compile Include="MyApp.cs" />
     <Compile Include="PlayersDialog.xaml.cs">
       <DependentUpon>PlayersDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SearchDialog.xaml.cs">
+      <DependentUpon>SearchDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ThisAndThat.cs" />
     <Compile Include="UserControls\ItemTemplateControl.xaml.cs">
@@ -107,6 +113,14 @@
       <DependentUpon>BowlingDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="BowlingMainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SearchDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\BowlingUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

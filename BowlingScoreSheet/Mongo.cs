@@ -44,9 +44,9 @@ namespace BowlingScoreSheet
             IMongoDatabase db = client.GetDatabase(app.GetConfig("/config/database/mongo/database"));
             var collection = db.GetCollection<BsonDocument>(app.GetConfig("/config/database/mongo/collection"));
 
-            DateTime dt1 = DateTime.Now.ToUniversalTime().AddHours(-2);
-            DateTime dt2 = DateTime.Now.ToUniversalTime().AddHours(2);
-            var filter = builder.Lte("insertedAt", dt2) & builder.Gte("insertedAt", dt1);
+            //DateTime dt1 = DateTime.Now.ToUniversalTime().AddHours(-2);
+            //DateTime dt2 = DateTime.Now.ToUniversalTime().AddHours(2);
+            var filter = builder.Lte("insertedAt", dtEnd) & builder.Gte("insertedAt", dtStart);
             //execute
             var cursor = collection.Find(filter).Limit(
                 Convert.ToInt32(app.GetConfig("/config/database/mongo/max_documents_limit")));

@@ -38,8 +38,7 @@ namespace BowlingScoreSheet
             bd.SetBowlingDialogControler(bowlingDialogControler);
             bd.SetBowlingDialogModel(bowlingDialogModel);
             bd.SetBowlingScoreControlControlers(bowlingScoreControlControlers);
-            bd.SetBowlingScoreControlModels(bowlingScoreControlModels);
-            myApp.SetPersistence(new Mongo());
+            bd.SetBowlingScoreControlModels(bowlingScoreControlModels);           
         }
     }
 
